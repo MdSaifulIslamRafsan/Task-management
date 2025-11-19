@@ -19,7 +19,7 @@ import { setUser } from "../redux/features/auth/authSlice";
 import type { TErrorMessage } from "../Types/errorMessageTypes";
 import { verifyToken } from "../utils/verifyToken";
 import type { TUser } from "../Types/UserTypes";
-import { socket } from "../utils/socket";
+
 
 const Login = () => {
   const [login] = useLoginMutation();
@@ -36,8 +36,6 @@ const Login = () => {
         id: toastId,
         duration: 2000,
       });
-      socket.connect();
-      socket.emit("userId", userData.id);
       navigate(`/`);
     } catch (error: unknown) {
       toast.error(`something went wrong ${(error as TErrorMessage).message}`, {

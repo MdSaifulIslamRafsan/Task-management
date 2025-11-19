@@ -1,9 +1,11 @@
 import { Outlet } from "react-router-dom";
+import Navbar from "./components/share/Navbar";
 
 const App = () => {
   return (
-    <div className="p-5">
-      <div className="container flex border-2 border-border rounded-2xl  mx-auto">
+    <div className="">
+      <Navbar></Navbar>
+      <div className="container mx-auto px-4 lg:px-8 ">
         <Outlet></Outlet>
       </div>
     </div>
