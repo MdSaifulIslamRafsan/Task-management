@@ -1,72 +1,44 @@
+import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
-import { ProjectServices } from "./project.service";
+import { projectService } from "./project.service";
 
 const createProject = catchAsync(async (req, res) => {
-  const owner = req.user._id;
-
-  const project = await ProjectServices.createProject({
-    ...req.body,
-    owner,
-  });
+  const result = await projectService.createProjectIntoDB(req.body);
 
   sendResponse(res, {
-    statusCode: 201,
     success: true,
+    statusCode: httpStatus.OK,
     message: "Project created successfully",
-    data: project,
+    data: result,
   });
 });
 
-const getMyProjects = catchAsync(async (req, res) => {
-  const userId = req.user._id;
-  const projects = await ProjectServices.getProjectsByUser(userId);
+const getAllProjects = catchAsync(async (req, res) => {
+  const result = await projectService.getAllProjectsFromDB();
 
   sendResponse(res, {
     success: true,
-    statusCode: 200,
-    message: "Projects retrieved",
-    data: projects,
+    statusCode: httpStatus.OK,
+    message: "Projects retrieved successfully",
+    data: result,
   });
 });
 
-const getSingleProject = catchAsync(async (req, res) => {
-  const project = await ProjectServices.getSingleProject(req.params.id);
+const getProjectById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await projectService.getProjectByIdFromDB(id);
 
   sendResponse(res, {
     success: true,
-    statusCode: 200,
-    message: "Project retrieved",
-    data: project,
+    statusCode: httpStatus.OK,
+    message: "Project retrieved successfully",
+    data: result,
   });
 });
 
-const updateProject = catchAsync(async (req, res) => {
-  const updated = await ProjectServices.updateProject(req.params.id, req.body);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: 200,
-    message: "Project updated",
-    data: updated,
-  });
-});
-
-const deleteProject = catchAsync(async (req, res) => {
-  const delate = await ProjectServices.deleteProject(req.params.id);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: 200,
-    data: delate,
-    message: "Project deleted",
-  });
-});
-
-export const ProjectController = {
+export const projectController = {
   createProject,
-  getMyProjects,
-  getSingleProject,
-  updateProject,
-  deleteProject,
+  getAllProjects,
+  getProjectById,
 };

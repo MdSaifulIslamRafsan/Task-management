@@ -1,53 +1,31 @@
-
+import httpStatus from "http-status";
+import { TTeam } from "./team.interface";
 import { Team } from "./team.model";
-import { TMember } from "./team.interface";
+import AppError from "../../errors/AppError";
 
-const createTeam = async (ownerId: string, name: string) => {
-  return await Team.create({ ownerId, name, members: [] });
+const createTeamIntoDB = async (data: TTeam) => {
+  const isExistTeam = await Team.findOne({ name: data?.name });
+
+  if (isExistTeam) {
+    throw new AppError(httpStatus.CONFLICT, "Team already exists");
+  }
+
+  const result = await Team.create(data);
+  return result;
 };
 
-const getTeamById = async (teamId: string) => {
-  return await Team.findById(teamId);
+const getAllTeamsFromDB = async () => {
+  const result = await Team.find().populate('members');
+  return result;
 };
 
-const addMember = async (teamId: string, member: TMember) => {
-  return await Team.findByIdAndUpdate(
-    teamId,
-    { $push: { members: member } },
-    { new: true }
-  );
-};
-
-const updateMember = async (
-  teamId: string,
-  memberId: string,
-  payload: Partial<TMember>
-) => {
-  return await Team.findOneAndUpdate(
-    { _id: teamId, "members._id": memberId },
-    {
-      $set: {
-        "members.$.name": payload.name,
-        "members.$.role": payload.role,
-        "members.$.capacity": payload.capacity,
-      },
-    },
-    { new: true }
-  );
-};
-
-const deleteMember = async (teamId: string, memberId: string) => {
-  return await Team.findByIdAndUpdate(
-    teamId,
-    { $pull: { members: { _id: memberId } } },
-    { new: true }
-  );
+const getTeamByIdFromDB = async (id: string) => {
+  const result = await Team.findById(id).populate('members');
+  return result;
 };
 
 export const teamService = {
-  createTeam,
-  getTeamById,
-  addMember,
-  updateMember,
-  deleteMember,
+  createTeamIntoDB,
+  getAllTeamsFromDB,
+  getTeamByIdFromDB,
 };

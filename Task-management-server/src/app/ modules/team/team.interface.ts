@@ -1,18 +1,11 @@
 import { Model, Types } from "mongoose";
 
-export interface TMember {
-  _id?: Types.ObjectId;
-  name: string;
-  role: string;
-  capacity: number; 
-  currentTaskCount?: number; 
-}
-
 export interface TTeam {
-  _id?: Types.ObjectId;
-  ownerId: Types.ObjectId;
+  _id: Types.ObjectId;
   name: string;
-  members: TMember[];
+  members: Types.ObjectId[];
 }
 
-export type TeamModel = Model<TTeam>;
+export interface TeamModel extends Model<TTeam> {
+  isTeamExistByName(name: string): Promise<TTeam>;
+}

@@ -4,75 +4,41 @@ import sendResponse from "../../utils/sendResponse";
 import { teamService } from "./team.service";
 
 const createTeam = catchAsync(async (req, res) => {
-  const { name } = req.body;
-  const ownerId = req.user._id;
-
-  const result = await teamService.createTeam(ownerId, name);
+  const result = await teamService.createTeamIntoDB(req.body);
 
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     message: "Team created successfully",
+    data: result,
+  });
+});
+
+const getAllTeams = catchAsync(async (req, res) => {
+  const result = await teamService.getAllTeamsFromDB();
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Teams retrieved successfully",
     data: result,
   });
 });
 
 const getTeamById = catchAsync(async (req, res) => {
   const { id } = req.params;
-
-  const result = await teamService.getTeamById(id);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Team fetched successfully",
-    data: result,
-  });
-});
-
-const addMember = catchAsync(async (req, res) => {
-  const { id } = req.params;
-
-  const result = await teamService.addMember(id, req.body);
+  const result = await teamService.getTeamByIdFromDB(id);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Member added successfully",
-    data: result,
-  });
-});
-
-const updateMember = catchAsync(async (req, res) => {
-  const { id, memberId } = req.params;
-
-  const result = await teamService.updateMember(id, memberId, req.body);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Member updated successfully",
-    data: result,
-  });
-});
-
-const deleteMember = catchAsync(async (req, res) => {
-  const { id, memberId } = req.params;
-
-  const result = await teamService.deleteMember(id, memberId);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Member deleted successfully",
+    message: "Team retrieved successfully",
     data: result,
   });
 });
 
 export const teamController = {
   createTeam,
+  getAllTeams,
   getTeamById,
-  addMember,
-  updateMember,
-  deleteMember,
 };

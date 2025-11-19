@@ -1,15 +1,15 @@
 import { Model, Types } from "mongoose";
 
+export type TProjectStatus = "active" | "completed" | "on-hold";
+
 export interface TProject {
+  _id: Types.ObjectId;
   name: string;
   description?: string;
-  team: Types.ObjectId; 
-  owner: Types.ObjectId; 
-  isDeleted?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  teamId: Types.ObjectId;
+  status: TProjectStatus;
 }
 
 export interface ProjectModel extends Model<TProject> {
-  isProjectExist(id: string): Promise<TProject | null>;
+  isProjectExistByName(name: string): Promise<TProject>;
 }

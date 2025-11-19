@@ -1,31 +1,31 @@
+import httpStatus from "http-status";
 import { TProject } from "./project.interface";
 import { Project } from "./project.model";
+import AppError from "../../errors/AppError";
 
-const createProject = async (payload: TProject) => {
-  const result = await Project.create(payload);
+const createProjectIntoDB = async (data: TProject) => {
+  const isExistProject = await Project.findOne({ name: data?.name });
+
+  if (isExistProject) {
+    throw new AppError(httpStatus.CONFLICT, "Project with this name already exists");
+  }
+
+  const result = await Project.create(data);
   return result;
 };
 
-const getProjectsByUser = async (userId: string) => {
-  return await Project.find({ owner: userId }).populate("team");
+const getAllProjectsFromDB = async () => {
+  const result = await Project.find().populate('teamId');
+  return result;
 };
 
-const getSingleProject = async (id: string) => {
-  return await Project.findById(id).populate("team");
+const getProjectByIdFromDB = async (id: string) => {
+  const result = await Project.findById(id).populate('teamId');
+  return result;
 };
 
-const updateProject = async (id: string, payload: Partial<TProject>) => {
-  return await Project.findByIdAndUpdate(id, payload, { new: true });
-};
-
-const deleteProject = async (id: string) => {
-  return await Project.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
-};
-
-export const ProjectServices = {
-  createProject,
-  getProjectsByUser,
-  getSingleProject,
-  updateProject,
-  deleteProject,
+export const projectService = {
+  createProjectIntoDB,
+  getAllProjectsFromDB,
+  getProjectByIdFromDB,
 };

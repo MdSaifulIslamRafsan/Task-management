@@ -1,23 +1,27 @@
-import mongoose, { Schema } from "mongoose";
-import { TMember, TTeam, TeamModel } from "./team.interface";
+import mongoose from "mongoose";
+import { TTeam, TeamModel } from "./team.interface";
 
-const memberSchema = new Schema<TMember>(
+const teamSchema = new mongoose.Schema<TTeam>(
   {
-    name: { type: String, required: true },
-    role: { type: String, required: true },
-    capacity: { type: Number, required: true, min: 0, max: 5 },
-    currentTaskCount: { type: Number, default: 0 },
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    members: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Member',
+    }],
   },
   { timestamps: true }
 );
 
-const teamSchema = new Schema<TTeam>(
-  {
-    ownerId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-    name: { type: String, required: true },
-    members: [memberSchema],
-  },
-  { timestamps: true }
+teamSchema.static(
+  "isTeamExistByName",
+  async function isTeamExistByName(name: string) {
+    const existingTeam = await Team.findOne({ name });
+    return existingTeam;
+  }
 );
 
 export const Team = mongoose.model<TTeam, TeamModel>("Team", teamSchema);

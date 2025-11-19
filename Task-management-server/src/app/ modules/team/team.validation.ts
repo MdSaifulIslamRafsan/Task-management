@@ -1,15 +1,12 @@
 import { z } from "zod";
 
-export const createTeamSchema = z.object({
+const createTeamValidation = z.object({
   body: z.object({
-    name: z.string().min(2),
+    name: z.string().nonempty("Team name is required"),
+    members: z.array(z.string()).optional(),
   }),
 });
 
-export const addMemberSchema = z.object({
-  body: z.object({
-    name: z.string().min(2),
-    role: z.string().min(2),
-    capacity: z.number().min(0).max(5),
-  }),
-});
+export const TeamValidation = {
+  createTeamValidation,
+};
