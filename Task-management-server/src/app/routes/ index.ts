@@ -2,7 +2,10 @@ import express from "express";
 import { UserRoutes } from "../ modules/User/user.route";
 import { AuthRoutes } from "../ modules/Auth/AuthRoutes";
 import { ProjectRoutes } from "../ modules/project/project.route";
-import { teamRoutes } from "../ modules/team/team.route";
+
+import { TaskRoutes } from "../ modules/task/task.route";
+import { TeamRoutes } from "../ modules/team/team.route";
+import { MemberRoutes } from "../ modules/member/member.route";
 
 const router = express.Router();
 
@@ -21,7 +24,15 @@ const modulesRoutes = [
   },
   {
     path: "/team",
-    route: teamRoutes,
+    route: TeamRoutes,
+  },
+  {
+    path: "/task",
+    route: TaskRoutes,
+  },
+  {
+    path: "/member",
+    route: MemberRoutes,
   },
 ];
 

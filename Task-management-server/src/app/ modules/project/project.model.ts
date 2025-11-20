@@ -14,12 +14,7 @@ const projectSchema = new mongoose.Schema<TProject>(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Team',
       required: true,
-    },
-    status: {
-      type: String,
-      enum: ["active", "completed", "on-hold"],
-      default: "active",
-    },
+    }
   },
   { timestamps: true }
 );

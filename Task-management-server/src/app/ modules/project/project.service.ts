@@ -7,7 +7,10 @@ const createProjectIntoDB = async (data: TProject) => {
   const isExistProject = await Project.findOne({ name: data?.name });
 
   if (isExistProject) {
-    throw new AppError(httpStatus.CONFLICT, "Project with this name already exists");
+    throw new AppError(
+      httpStatus.CONFLICT,
+      "Project with this name already exists"
+    );
   }
 
   const result = await Project.create(data);
@@ -15,17 +18,28 @@ const createProjectIntoDB = async (data: TProject) => {
 };
 
 const getAllProjectsFromDB = async () => {
-  const result = await Project.find().populate('teamId');
-  return result;
-};
-
-const getProjectByIdFromDB = async (id: string) => {
-  const result = await Project.findById(id).populate('teamId');
+  const result = await Project.aggregate([
+    {
+      $lookup: {
+        from: "teams",
+        localField: "teamId",
+        foreignField: "_id",
+        as: "team",
+      },
+    },
+    { $unwind: "$team" },
+    {
+      $project: {
+        teamName: "$team.teamName",
+        name: 1,
+        description: 1,
+      },
+    },
+  ]);
   return result;
 };
 
 export const projectService = {
   createProjectIntoDB,
   getAllProjectsFromDB,
-  getProjectByIdFromDB,
 };

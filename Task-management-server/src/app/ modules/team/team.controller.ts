@@ -25,14 +25,14 @@ const getAllTeams = catchAsync(async (req, res) => {
   });
 });
 
-const getTeamById = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const result = await teamService.getTeamByIdFromDB(id);
+const getTeamsByProjectId = catchAsync(async (req, res) => {
+  const { projectId } = req.params;
+  const result = await teamService.getAllTeamsByProjectIdFromDB(projectId);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Team retrieved successfully",
+    message: "Teams retrieved successfully",
     data: result,
   });
 });
@@ -40,5 +40,5 @@ const getTeamById = catchAsync(async (req, res) => {
 export const teamController = {
   createTeam,
   getAllTeams,
-  getTeamById,
+  getTeamsByProjectId,
 };

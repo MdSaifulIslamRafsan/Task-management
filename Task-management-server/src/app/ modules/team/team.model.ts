@@ -3,15 +3,11 @@ import { TTeam, TeamModel } from "./team.interface";
 
 const teamSchema = new mongoose.Schema<TTeam>(
   {
-    name: {
+    teamName: {
       type: String,
       required: true,
       unique: true,
     },
-    members: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Member',
-    }],
   },
   { timestamps: true }
 );
