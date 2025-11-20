@@ -7,9 +7,37 @@ import CInput from "../form/CInput";
 import CTextarea from "../form/CTextarea";
 import CSelect from "../form/CSelect";
 
-const ProjectModal = ({ open, onClose, teams }) => {
+import type { TErrorMessage } from "../../Types/errorMessageTypes";
+
+import type { FC } from "react";
+import { useGetTeamsQuery } from "../../redux/features/team/teamApi";
+import type { TTeam } from "../../Types/TeamTypes";
+import { useCreateProjectMutation } from "../../redux/features/Projects/projectApi";
+
+interface ProjectModalProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const ProjectModal: FC<ProjectModalProps> = ({ open, onClose }) => {
+  const [createProject] = useCreateProjectMutation();
+  const { data } = useGetTeamsQuery(undefined);
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const toastId = toast.loading("logging in...");
+
+    try {
+      const res = await createProject(data).unwrap();
+      toast.success(res?.message || `Project create successfully`, {
+        id: toastId,
+        duration: 2000,
+      });
+    } catch (error) {
+      toast.error(`something went wrong ${(error as TErrorMessage).message}`, {
+        id: toastId,
+        duration: 2000,
+      });
+    }
     onClose();
   };
 
@@ -28,7 +56,7 @@ const ProjectModal = ({ open, onClose, teams }) => {
         // resolver={loginSchema}
       >
         <CInput
-          fieldName="projectName"
+          fieldName="name"
           label="Project Name"
           placeholder="Enter Project Name"
           type="text"
@@ -45,9 +73,9 @@ const ProjectModal = ({ open, onClose, teams }) => {
           label="Assign Team"
           placeholder="Select a team"
           required
-          options={teams.map((t) => ({
-            label: t.name,
-            value: t.id,
+          options={data?.data?.map((t: TTeam) => ({
+            label: t?.teamName,
+            value: t?._id,
           }))}
         />
 
@@ -55,7 +83,7 @@ const ProjectModal = ({ open, onClose, teams }) => {
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="">
             Create
           </Button>
         </div>

@@ -15,7 +15,14 @@ import {
   SelectValue,
 } from "../ui/select";
 
-const CSelect = ({ label, name, placeholder, options, required }: TCSelect) => {
+const CSelect = ({
+  label,
+  name,
+  placeholder,
+  options,
+  required,
+  onValueChange,
+}: TCSelect) => {
   const { control } = useFormContext();
   return (
     <FormField
@@ -28,8 +35,10 @@ const CSelect = ({ label, name, placeholder, options, required }: TCSelect) => {
           </FormLabel>
           <FormControl>
             <Select
-        
-              onValueChange={field.onChange}
+              onValueChange={(value) => {
+                field.onChange(value);
+                onValueChange?.(value);
+              }}
               value={field.value}
               defaultValue={field.value}
             >

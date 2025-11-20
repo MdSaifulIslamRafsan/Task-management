@@ -1,4 +1,4 @@
-import { Activity, CheckCircle2, Clock } from "lucide-react";
+import { CheckCircle2, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface Props {
@@ -11,33 +11,22 @@ interface Props {
   overloadedCount: number;
 }
 
-const MetricsGrid = ({
-  totalTasks,
-  completionRate,
-  projectsCount,
-
-}: Props) => {
+const MetricsGrid = ({ totalTasks, completionRate, projectsCount }: Props) => {
   const metrics = [
     {
       title: "Total Projects",
-      icon: <Clock className="h-10 w-10 mx-auto text-amber-500" />,
+      icon: <Clock className="h-10 w-10 mx-auto text-primary" />,
       value: projectsCount,
-
-      gradient: "from-amber-500/10 to-amber-500/5",
     },
     {
       title: "Total Tasks",
       icon: <CheckCircle2 className="h-10 w-10 mx-auto text-primary" />,
       value: totalTasks,
-
-      gradient: "from-blue-500/10 to-blue-500/5",
     },
     {
       title: "Total Teams",
-      icon: <Activity className="h-10 w-10 mx-auto text-purple-500" />,
+      icon: <Users className="h-10 w-10 mx-auto text-primary" />,
       value: `${completionRate}%`,
-
-      gradient: "from-purple-500/10 to-purple-500/5",
     },
   ];
 
