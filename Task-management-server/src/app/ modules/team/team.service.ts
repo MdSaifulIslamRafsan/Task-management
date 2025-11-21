@@ -51,7 +51,7 @@ const getAllTeamsByProjectIdFromDB = async (projectId: string) => {
   }
   const teamId = project.teamId;
   const result = await Member.find({ teamId: teamId }).select(
-    "name _id capacity"
+    "name _id capacity currentLoad"
   );
   return result;
 };

@@ -15,7 +15,7 @@ app.use("/api/v1", router);
 
 // Route to handle GET requests at /api/users
 app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome to the chat app API");
+  res.send("Welcome to the Task Management API");
 });
 
 // global error handler

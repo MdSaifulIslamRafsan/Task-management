@@ -1,20 +1,40 @@
-import httpStatus from "http-status";
 import { TTask, TStatus } from "./task.interface";
 import { Task } from "./task.model";
-import AppError from "../../errors/AppError";
+
+import { Member } from "../member/member.model";
+import mongoose from "mongoose";
 
 const createTaskIntoDB = async (data: TTask) => {
-  const isExistTask = await Task.findOne({ title: data?.title });
+  const session = await mongoose.startSession();
 
-  if (isExistTask) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      "Task with this title already exists"
-    );
+  try {
+    session.startTransaction();
+
+    const task = await Task.create([data], { session });
+
+    if (data.assignedId) {
+      await Member.findByIdAndUpdate(
+        data.assignedId,
+        { $inc: { currentLoad: 1 } },
+        { session }
+      );
+    }
+
+    await session.commitTransaction();
+
+    const result = await Task.findById(task[0]._id);
+
+    return result;
+  } catch (error) {
+    try {
+      await session.abortTransaction();
+    } catch (abortError) {
+      console.error("Abort failed:", abortError);
+    }
+    throw error;
+  } finally {
+    await session.endSession();
   }
-
-  const result = await Task.create(data);
-  return result;
 };
 
 const getAllTasksFromDB = async () => {

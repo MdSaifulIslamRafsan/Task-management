@@ -15,7 +15,7 @@ const taskSchema = new mongoose.Schema<TTask>(
       ref: 'Project',
       required: true,
     },
-    assignedTo: {
+    assignedId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Member',
     },
@@ -26,7 +26,7 @@ const taskSchema = new mongoose.Schema<TTask>(
     },
     status: {
       type: String,
-      enum: ["Pending", "In Progress", "Completed"],
+      enum: ["Pending", "In Progress", "Done"],
       default: "Pending",
     },
     dueDate: {
