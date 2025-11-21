@@ -34,7 +34,9 @@ const CForm = ({
           onSubmit={methods.handleSubmit(handleSubmit)}
           className={`${styles}`}
         >
-          {children}
+          {typeof children === "function"
+            ? children({ form: methods })
+            : children}
         </form>
       </Form>
     </FormProvider>

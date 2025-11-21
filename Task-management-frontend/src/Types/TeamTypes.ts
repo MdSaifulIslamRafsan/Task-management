@@ -8,4 +8,5 @@ export interface TMember {
   capacity: number;
   _id: string;
   name: string;
+  currentLoad: number;
 }

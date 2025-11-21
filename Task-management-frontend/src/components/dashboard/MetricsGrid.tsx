@@ -1,32 +1,24 @@
 import { CheckCircle2, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { useGetDashboardCountsQuery } from "../../redux/features/dashboard/dashboardApi";
 
-interface Props {
-  totalTasks: number;
-  completedTasks: number;
-  inProgressTasks: number;
-  completionRate: number;
-  projectsCount: number;
-  membersCount: number;
-  overloadedCount: number;
-}
-
-const MetricsGrid = ({ totalTasks, completionRate, projectsCount }: Props) => {
+const MetricsGrid = () => {
+  const { data } = useGetDashboardCountsQuery(undefined);
   const metrics = [
     {
       title: "Total Projects",
       icon: <Clock className="h-10 w-10 mx-auto text-primary" />,
-      value: projectsCount,
+      value: data?.data?.totalProjects || 0,
     },
     {
       title: "Total Tasks",
       icon: <CheckCircle2 className="h-10 w-10 mx-auto text-primary" />,
-      value: totalTasks,
+      value: data?.data?.totalTasks || 0,
     },
     {
       title: "Total Teams",
       icon: <Users className="h-10 w-10 mx-auto text-primary" />,
-      value: `${completionRate}%`,
+      value: data?.data?.totalTeams || 0,
     },
   ];
 

@@ -22,7 +22,7 @@ const TeamsPage = () => {
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
 
   return (
-    <main className="p-6 space-y-8">
+    <main className="py-6 lg:p-6 space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Teams & Members</h1>
         <div className="flex gap-2">

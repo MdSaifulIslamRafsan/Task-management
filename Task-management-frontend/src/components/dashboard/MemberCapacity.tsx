@@ -122,7 +122,7 @@ export default function TeamWorkloadSummary({ initialStats } = {}) {
 
   return (
     <Card className="lg:col-span-4">
-      <CardHeader className="flex items-center justify-between">
+      <CardHeader className="flex flex-col gap-5 md:flex-row items-center justify-between">
         <CardTitle>Team Workload Summary</CardTitle>
         <Button onClick={handleReassignTasks} disabled={isReassigning}>
           <Plus className="mr-2 h-4 w-4" />

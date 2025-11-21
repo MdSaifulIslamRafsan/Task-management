@@ -6,11 +6,16 @@ import Dashboard from "../pages/Dashboard";
 import Projects from "../pages/Projects";
 import Teams from "../pages/Teams";
 import Tasks from "../pages/Tasks";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App></App>,
+    element: (
+      <ProtectedRoute>
+        <App></App>
+      </ProtectedRoute>
+    ),
     children: [
       { path: "/", element: <Dashboard /> },
       { path: "/projects", element: <Projects /> },

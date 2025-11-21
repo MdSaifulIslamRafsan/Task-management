@@ -39,7 +39,7 @@ const Tasks = () => {
   const [tasks] = useState(rawTasks);
 
   return (
-    <main className="p-6 space-y-8">
+    <main className="py-6 lg:p-6 space-y-8">
 
       {/* Add Task Button */}
       <div className="flex gap-5 justify-between">
