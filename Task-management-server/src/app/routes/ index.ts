@@ -6,6 +6,7 @@ import { ProjectRoutes } from "../ modules/project/project.route";
 import { TaskRoutes } from "../ modules/task/task.route";
 import { TeamRoutes } from "../ modules/team/team.route";
 import { MemberRoutes } from "../ modules/member/member.route";
+import { DashboardRoutes } from "../ modules/dashboard/dashboard.route";
 
 const router = express.Router();
 
@@ -34,6 +35,10 @@ const modulesRoutes = [
     path: "/member",
     route: MemberRoutes,
   },
+  {
+    path: "/dashboard",
+    route: DashboardRoutes,
+  }
 ];
 
 modulesRoutes.forEach((route) => router.use(route.path, route.route));
