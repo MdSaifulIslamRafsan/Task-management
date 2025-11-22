@@ -6,10 +6,14 @@ import { useGetTaskQuery } from "../redux/features/task/taskApi";
 import type { TTask } from "../Types/TaskTypes";
 import { useGetProjectsQuery } from "../redux/features/Projects/projectApi";
 import type { TProject } from "../Types/ProjectTypes";
+import ConfirmModal from "../components/tasks/ConfirmModal";
 
 const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState("");
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  
 
   const { data } = useGetTaskQuery(selectedProject);
   const { data: projectsData } = useGetProjectsQuery(undefined);
@@ -20,6 +24,11 @@ const Tasks = () => {
 
   const clearFilter = () => {
     setSelectedProject("");
+  };
+
+  const handleDeleteClick = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setDeleteModalOpen(true);
   };
 
   return (
@@ -133,13 +142,7 @@ const Tasks = () => {
                     Edit
                   </Button>
 
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      console.log("Delete:", task?._id);
-                    }}
-                  >
+                  <Button variant="destructive" size="sm" onClick={() => {handleDeleteClick(task?._id)}}>
                     Delete
                   </Button>
                 </td>
@@ -151,6 +154,13 @@ const Tasks = () => {
 
       {isModalOpen && (
         <TaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      )}
+      {deleteModalOpen && (
+        <ConfirmModal
+          isOpen={deleteModalOpen}
+          onCancel={() => setDeleteModalOpen(false)}
+          selectedTaskId={selectedTaskId}
+        />
       )}
     </main>
   );

@@ -191,6 +191,7 @@ export default function TaskModal({ isOpen, onClose }: TaskModalProps) {
                   <Button
                     type="button"
                     className="sm:mt-6"
+                    variant={"outline"}
                     onClick={() => handleAutoAssign(form)}
                   >
                     Auto Assign
