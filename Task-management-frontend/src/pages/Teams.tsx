@@ -14,9 +14,10 @@ import TeamModal from "../components/team/TeamModal";
 import MemberModal from "../components/team/MemberModal";
 import { useGetTeamsQuery } from "../redux/features/team/teamApi";
 import type { TTeam } from "../Types/TeamTypes";
+import TeamSkeleton from "../components/Skeleton/TeamSkeleton";
 
 const TeamsPage = () => {
-  const { data } = useGetTeamsQuery(undefined);
+  const { data, isLoading } = useGetTeamsQuery(undefined);
 
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
@@ -40,17 +41,21 @@ const TeamsPage = () => {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        {data?.data?.map((team: TTeam) => (
-          <Card key={team?._id}>
-            <CardHeader className="text-center space-y-2">
-              <Users className="h-10 w-10 mx-auto text-gray-500" />
-              <CardTitle className="">{team?.teamName}</CardTitle>
-              <CardDescription>{team?.memberCount} Members</CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
+      {isLoading ? (
+        <TeamSkeleton></TeamSkeleton>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          {data?.data?.map((team: TTeam) => (
+            <Card key={team?._id}>
+              <CardHeader className="text-center space-y-2">
+                <Users className="h-10 w-10 mx-auto text-gray-500" />
+                <CardTitle className="">{team?.teamName}</CardTitle>
+                <CardDescription>{team?.memberCount} Members</CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <TeamModal
         isTeamModalOpen={isTeamModalOpen}

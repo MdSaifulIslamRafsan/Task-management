@@ -7,10 +7,12 @@ import Projects from "../pages/Projects";
 import Teams from "../pages/Teams";
 import Tasks from "../pages/Tasks";
 import ProtectedRoute from "./ProtectedRoute";
+import NotFoundPage from "../pages/NotFound";
 
 export const router = createBrowserRouter([
   {
     path: "/",
+    errorElement: <NotFoundPage></NotFoundPage>,
     element: (
       <ProtectedRoute>
         <App></App>

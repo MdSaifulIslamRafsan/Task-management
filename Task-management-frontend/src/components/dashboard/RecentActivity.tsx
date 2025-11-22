@@ -1,5 +1,6 @@
 import { useGetActivityQuery } from "../../redux/features/activity/activityApi";
 import type { TLogEntry } from "../../Types/ActivityTypes";
+import RecentActivitySkeleton from "../Skeleton/dashboard/RecentActivitySkeleton";
 import {
   Card,
   CardContent,
@@ -9,7 +10,10 @@ import {
 } from "../ui/card";
 
 const RecentActivity = () => {
-  const { data } = useGetActivityQuery(undefined);
+  const { data, isLoading } = useGetActivityQuery(undefined);
+  if (isLoading) {
+    return <RecentActivitySkeleton></RecentActivitySkeleton>;
+  }
   return (
     <Card className="lg:col-span-3">
       <CardHeader>

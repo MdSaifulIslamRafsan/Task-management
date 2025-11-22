@@ -18,9 +18,10 @@ import { toast } from "sonner";
 import type { TErrorMessage } from "../../Types/errorMessageTypes";
 import { useGetMembersQuery } from "../../redux/features/team/teamApi";
 import type { TMember, TReassignmentResult } from "../../Types/TeamTypes";
+import MemberCapacitySkeleton from "../Skeleton/dashboard/MemberCapacitySkeleton";
 
 export default function TeamWorkloadSummary() {
-  const { data } = useGetMembersQuery(undefined);
+  const { data, isLoading } = useGetMembersQuery(undefined);
 
   const [reassignmentResult, setReassignmentResult] =
     useState<TReassignmentResult | null>(null);
@@ -44,6 +45,10 @@ export default function TeamWorkloadSummary() {
       });
     }
   };
+
+  if (isLoading) {
+    return <MemberCapacitySkeleton />;
+  }
 
   return (
     <Card className="lg:col-span-4">

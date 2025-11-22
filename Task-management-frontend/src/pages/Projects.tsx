@@ -6,9 +6,10 @@ import { Plus } from "lucide-react";
 
 import type { TProject } from "../Types/ProjectTypes";
 import { useGetProjectsQuery } from "../redux/features/Projects/projectApi";
+import ProjectsSkeleton from "../components/Skeleton/ProjectsSkeleton";
 
 const ProjectsPage = () => {
-  const { data } = useGetProjectsQuery(undefined);
+  const { data, isLoading } = useGetProjectsQuery(undefined);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -29,11 +30,15 @@ const ProjectsPage = () => {
       </div>
 
       {/* Projects Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {data?.data?.map((project: TProject) => (
-          <ProjectCard key={project?._id} project={project} />
-        ))}
-      </div>
+      {isLoading ? (
+        <ProjectsSkeleton />
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {data?.data?.map((project: TProject) => (
+            <ProjectCard key={project?._id} project={project} />
+          ))}
+        </div>
+      )}
 
       {/* Modal */}
       <ProjectModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />

@@ -8,6 +8,7 @@ import { useGetProjectsQuery } from "../redux/features/Projects/projectApi";
 import type { TProject } from "../Types/ProjectTypes";
 import ConfirmModal from "../components/tasks/ConfirmModal";
 import UpdateTaskModal from "../components/tasks/UpdateTaskModal";
+import TaskSkeleton from "../components/Skeleton/TaskSkeleton";
 
 const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +17,7 @@ const Tasks = () => {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-  const { data } = useGetTaskQuery(selectedProject);
+  const { data, isLoading } = useGetTaskQuery(selectedProject);
   const { data: projectsData } = useGetProjectsQuery(undefined);
 
   const handleProjectChange = (projectId: string) => {
@@ -66,92 +67,96 @@ const Tasks = () => {
       </div>
 
       <div className="rounded-lg shadow-lg border overflow-x-auto">
-        <table className="min-w-full divide-y divide-border">
-          <thead className="">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Task
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Project
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Assigned To
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Priority
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          <tbody className=" divide-y divide-border">
-            {data?.data?.map((task: TTask) => (
-              <tr key={task?._id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-foreground">
-                    {task?.title}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {task?.description}
-                  </div>
-                </td>
-
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {task?.project?.name}
-                </td>
-
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {task?.assigneeMember?.name || "Unassigned"}
-                </td>
-
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      task?.priority === "High"
-                        ? "bg-red-100 text-red-800"
-                        : task?.priority === "Medium"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-green-100 text-green-800"
-                    }`}
-                  >
-                    {task?.priority}
-                  </span>
-                </td>
-
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {task?.status}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      handleUpdateClick(task?._id);
-                    }}
-                  >
-                    Edit
-                  </Button>
-
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      handleDeleteClick(task?._id);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </td>
+        {isLoading ? (
+          <TaskSkeleton />
+        ) : (
+          <table className="min-w-full divide-y divide-border">
+            <thead className="">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Task
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Project
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Assigned To
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Priority
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody className=" divide-y divide-border">
+              {data?.data?.map((task: TTask) => (
+                <tr key={task?._id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-foreground">
+                      {task?.title}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {task?.description}
+                    </div>
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    {task?.project?.name}
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    {task?.assigneeMember?.name || "Unassigned"}
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        task?.priority === "High"
+                          ? "bg-red-100 text-red-800"
+                          : task?.priority === "Medium"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {task?.priority}
+                    </span>
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                    {task?.status}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        handleUpdateClick(task?._id);
+                      }}
+                    >
+                      Edit
+                    </Button>
+
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        handleDeleteClick(task?._id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {isModalOpen && (

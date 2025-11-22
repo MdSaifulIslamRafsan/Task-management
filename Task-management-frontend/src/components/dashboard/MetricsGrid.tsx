@@ -1,9 +1,10 @@
 import { CheckCircle2, Clock, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useGetDashboardCountsQuery } from "../../redux/features/dashboard/dashboardApi";
+import MetricsGridSkeleton from "../Skeleton/dashboard/MetricsGridSkeleton";
 
 const MetricsGrid = () => {
-  const { data } = useGetDashboardCountsQuery(undefined);
+  const { data, isLoading } = useGetDashboardCountsQuery(undefined);
   const metrics = [
     {
       title: "Total Projects",
@@ -21,6 +22,10 @@ const MetricsGrid = () => {
       value: data?.data?.totalTeams || 0,
     },
   ];
+
+  if (isLoading) {
+    return <MetricsGridSkeleton></MetricsGridSkeleton>;
+  }
 
   return (
     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
