@@ -3,7 +3,6 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { taskService } from "./task.service";
 
-
 const createTask = catchAsync(async (req, res) => {
   const result = await taskService.createTaskIntoDB(req.body);
 
@@ -16,7 +15,16 @@ const createTask = catchAsync(async (req, res) => {
 });
 
 const getAllTasks = catchAsync(async (req, res) => {
-  const result = await taskService.getAllTasksFromDB();
+  let projectId: string | undefined;
+  if (typeof req.query.projectId === "string") {
+    projectId = req.query.projectId;
+  } else if (Array.isArray(req.query.projectId)) {
+    const first = req.query.projectId[0];
+    projectId = typeof first === "string" ? first : undefined;
+  } else {
+    projectId = undefined;
+  }
+  const result = await taskService.getAllTasksFromDB(projectId);
 
   sendResponse(res, {
     success: true,

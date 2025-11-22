@@ -5,6 +5,7 @@ import { Member } from "../member/member.model";
 import mongoose from "mongoose";
 
 const createTaskIntoDB = async (data: TTask) => {
+  console.log({ data });
   const session = await mongoose.startSession();
 
   try {
@@ -12,9 +13,9 @@ const createTaskIntoDB = async (data: TTask) => {
 
     const task = await Task.create([data], { session });
 
-    if (data.assignedId) {
+    if (data.assigneeId) {
       await Member.findByIdAndUpdate(
-        data.assignedId,
+        data.assigneeId,
         { $inc: { currentLoad: 1 } },
         { session }
       );
@@ -37,15 +38,63 @@ const createTaskIntoDB = async (data: TTask) => {
   }
 };
 
-const getAllTasksFromDB = async () => {
-  const result = await Task.find().populate("projectId").populate("assignedTo");
+const getAllTasksFromDB = async (projectId?: string) => {
+  const matchStage = projectId
+    ? { $match: { projectId: new mongoose.Types.ObjectId(projectId) } }
+    : { $match: {} };
+
+  const result = await Task.aggregate([
+    matchStage,
+    {
+      $lookup: {
+        from: "projects",
+        localField: "projectId",
+        foreignField: "_id",
+        as: "project",
+      },
+    },
+    { $unwind: "$project" },
+
+    {
+      $lookup: {
+        from: "members",
+        localField: "assigneeId",
+        foreignField: "_id",
+        as: "assigneeMember",
+      },
+    },
+    {
+      $unwind: {
+        path: "$assigneeMember",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        priority: 1,
+        status: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        project: {
+          _id: 1,
+          name: 1,
+        },
+        assigneeMember: {
+          _id: 1,
+          name: 1,
+        },
+      },
+    },
+  ]);
+
   return result;
 };
 
 const getTaskByIdFromDB = async (id: string) => {
-  const result = await Task.findById(id)
-    .populate("projectId")
-    .populate("assignedTo");
+  const result = await Task.findById(id);
   return result;
 };
 

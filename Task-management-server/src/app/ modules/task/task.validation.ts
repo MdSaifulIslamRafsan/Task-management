@@ -5,7 +5,7 @@ const createTaskValidation = z.object({
     title: z.string().nonempty("Task title is required"),
     description: z.string().nonempty("Task description is required"),
     projectId: z.string().nonempty("Project ID is required"),
-    assignedId: z.string().optional(),
+    assigneeId: z.string().optional(),
     priority: z.enum(["Low", "Medium", "High"]).default("Medium"),
     status: z.enum(["Pending", "In Progress", "Completed"]).default("Pending"),
     dueDate: z.string().optional(),

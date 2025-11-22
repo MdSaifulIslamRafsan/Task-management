@@ -8,7 +8,7 @@ export interface TTask {
   title: string;
   description?: string;
   projectId: Types.ObjectId;
-  assignedId?: Types.ObjectId;
+  assigneeId?: Types.ObjectId;
   priority: TPriority;
   status: TStatus;
   dueDate?: Date;
