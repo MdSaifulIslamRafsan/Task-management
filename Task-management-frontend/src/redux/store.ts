@@ -1,9 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import { baseApi } from "./api/baseApi";
-import layoutReducer from "./features/layoutSlice";
 import authReducer from "./features/auth/authSlice";
-
 
 import {
   persistStore,
@@ -25,7 +23,6 @@ const persistedReducer = persistReducer(persistConfig, authReducer);
 export const store = configureStore({
   reducer: {
     auth: persistedReducer,
-    layout: layoutReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
 
