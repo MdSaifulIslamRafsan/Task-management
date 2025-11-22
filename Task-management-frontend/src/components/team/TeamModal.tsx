@@ -8,6 +8,7 @@ import type { TErrorMessage } from "../../Types/errorMessageTypes";
 import { useCreateTeamMutation } from "../../redux/features/team/teamApi";
 import type { FC } from "react";
 import React from "react";
+import { teamSchema } from "../../Schema/teamSchema";
 interface TeamModalProps {
   isTeamModalOpen: boolean;
   setIsTeamModalOpen: (v: boolean) => void;
@@ -36,7 +37,6 @@ const TeamModal: FC<TeamModalProps> = ({
     setIsTeamModalOpen(false);
   };
 
-
   return (
     <Modal
       open={isTeamModalOpen}
@@ -48,6 +48,7 @@ const TeamModal: FC<TeamModalProps> = ({
       <CForm
         styles="space-y-4"
         onSubmit={handleAddTeam}
+        resolver={teamSchema}
         defaultValues={{ teamName: "" }}
       >
         <CInput

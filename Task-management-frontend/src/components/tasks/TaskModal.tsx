@@ -17,6 +17,7 @@ import { useGetTeamsByProjectIdQuery } from "../../redux/features/team/teamApi";
 import type { TMember } from "../../Types/TeamTypes";
 import { useCreateTaskMutation } from "../../redux/features/task/taskApi";
 import type { TErrorMessage } from "../../Types/errorMessageTypes";
+import { taskSchema } from "../../Schema/taskSchema";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -114,6 +115,7 @@ export default function TaskModal({ isOpen, onClose }: TaskModalProps) {
       >
         <CForm
           onSubmit={onSubmit}
+          resolver={taskSchema}
           defaultValues={{
             title: "",
             projectId: "",

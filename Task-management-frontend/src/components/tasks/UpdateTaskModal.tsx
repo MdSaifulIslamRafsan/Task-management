@@ -20,6 +20,7 @@ import {
   useGetTaskByIdQuery,
   useUpdateTaskMutation,
 } from "../../redux/features/task/taskApi";
+import { updateTaskSchema } from "../../Schema/updateTaskSchema";
 
 interface TaskModalProps {
   isOpen: boolean;
@@ -137,6 +138,7 @@ export default function UpdateTaskModal({
       >
         <CForm
           onSubmit={onSubmit}
+          resolver={updateTaskSchema}
           defaultValues={{
             title: data?.data?.title || "",
             projectId: data?.data?.project?._id || "",

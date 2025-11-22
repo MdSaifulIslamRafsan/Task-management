@@ -13,6 +13,7 @@ import type { FC } from "react";
 import { useGetTeamsQuery } from "../../redux/features/team/teamApi";
 import type { TTeam } from "../../Types/TeamTypes";
 import { useCreateProjectMutation } from "../../redux/features/Projects/projectApi";
+import { projectSchema } from "../../Schema/projectSchema";
 
 interface ProjectModalProps {
   open: boolean;
@@ -53,7 +54,7 @@ const ProjectModal: FC<ProjectModalProps> = ({ open, onClose }) => {
         styles="space-y-4"
         onSubmit={onSubmit}
         defaultValues={{ projectName: "", teamId: "", description: "" }}
-        // resolver={loginSchema}
+        resolver={projectSchema}
       >
         <CInput
           fieldName="name"

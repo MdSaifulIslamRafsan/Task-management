@@ -11,6 +11,7 @@ import CSelect from "../form/CSelect";
 
 import React from "react";
 import type { TTeam } from "../../Types/TeamTypes";
+import { memberSchema } from "../../Schema/memberSchema";
 interface TeamModalProps {
   isMemberModalOpen: boolean;
   setIsMemberModalOpen: (v: boolean) => void;
@@ -51,6 +52,7 @@ const MemberModal: FC<TeamModalProps> = ({
     >
       <CForm
         styles="space-y-4"
+        resolver={memberSchema}
         onSubmit={handleAddMember}
         defaultValues={{
           teamId: "",
