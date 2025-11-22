@@ -23,8 +23,13 @@ const TeamsPage = () => {
 
   return (
     <main className="py-6 lg:p-6 space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Teams & Members</h1>
+      <div className="flex gap-5 flex-col items-center md:flex-row  justify-between">
+        <div className="text-center md:text-start">
+          <h1 className="text-3xl  font-bold">Teams & Members</h1>
+          <p className="text-gray-500">
+            Manage your project teams efficiently.
+          </p>
+        </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setIsMemberModalOpen(true)}>
             <UserPlus className="mr-2 h-4 w-4" /> Add Member

@@ -25,6 +25,17 @@ interface TaskModalProps {
 
 export default function TaskModal({ isOpen, onClose }: TaskModalProps) {
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const [formRef, setFormRef] = useState<UseFormReturn<FieldValues> | null>(
+    null
+  );
+
+  const [warningInfo, setWarningInfo] = useState<{
+    name: string;
+    currentLoad: number;
+    capacity: number;
+    memberId: string;
+  } | null>(null);
+
   const [createTask] = useCreateTaskMutation();
   const { data: project } = useGetProjectsQuery(undefined);
   const { data: teamData } = useGetTeamsByProjectIdQuery(selectedProjectId, {
@@ -68,114 +79,180 @@ export default function TaskModal({ isOpen, onClose }: TaskModalProps) {
       toast.success(`Task will be assigned to ${selected.name}`);
     }
   };
+  const handleAssigneeSelect = (
+    memberId: string,
+    form: UseFormReturn<FieldValues>
+  ) => {
+    const member = teamData?.data?.find((m: TMember) => m._id === memberId);
+
+    if (!member) return;
+
+    if (member.currentLoad >= member.capacity) {
+      setWarningInfo({
+        name: member.name,
+        currentLoad: member.currentLoad,
+        capacity: member.capacity,
+        memberId: member._id,
+      });
+      return;
+    }
+
+    form.setValue("assigneeId", member._id);
+  };
 
   return (
-    <Modal
-      open={isOpen}
-      onOpenChange={(v: boolean) => {
-        if (!v) {
-          onClose();
-          setSelectedProjectId("");
-        }
-      }}
-      title="Create New Task"
-    >
-      <CForm
-        onSubmit={onSubmit}
-        defaultValues={{
-          title: "",
-          projectId: "",
-          priority: "",
-          assigneeId: "",
-          status: "",
-          description: "",
+    <>
+      <Modal
+        open={isOpen}
+        onOpenChange={(v: boolean) => {
+          if (!v) {
+            onClose();
+            setSelectedProjectId("");
+          }
         }}
-        styles="space-y-4"
+        title="Create New Task"
       >
-        {({ form }) => (
-          <>
-            <div className="grid grid-cols-2 gap-4">
-              <CInput
-                fieldName="title"
-                label="Task Title"
-                placeholder="Enter task title"
-                required
-              />
+        <CForm
+          onSubmit={onSubmit}
+          defaultValues={{
+            title: "",
+            projectId: "",
+            priority: "",
+            assigneeId: null,
+            status: "",
+            description: "",
+          }}
+          styles="space-y-4"
+        >
+          {({ form }) => {
+            setFormRef(form);
+            return (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <CInput
+                    fieldName="title"
+                    label="Task Title"
+                    placeholder="Enter task title"
+                    required
+                  />
 
-              <CSelect
-                name="projectId"
-                label="Project"
-                onValueChange={handleProjectChange}
-                placeholder="Select Project"
-                required
-                options={(project?.data || []).map((p: TProject) => ({
-                  label: p.name,
-                  value: p._id,
-                }))}
-              />
-            </div>
+                  <CSelect
+                    name="projectId"
+                    label="Project"
+                    onValueChange={handleProjectChange}
+                    placeholder="Select Project"
+                    required
+                    options={(project?.data || []).map((p: TProject) => ({
+                      label: p.name,
+                      value: p._id,
+                    }))}
+                  />
+                </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <CSelect
-                name="priority"
-                label="Priority"
-                placeholder="Select Priority"
-                required
-                options={[
-                  { label: "Low", value: "Low" },
-                  { label: "Medium", value: "Medium" },
-                  { label: "High", value: "High" },
-                ]}
-              />
+                <div className="grid grid-cols-2 gap-4">
+                  <CSelect
+                    name="priority"
+                    label="Priority"
+                    placeholder="Select Priority"
+                    required
+                    options={[
+                      { label: "Low", value: "Low" },
+                      { label: "Medium", value: "Medium" },
+                      { label: "High", value: "High" },
+                    ]}
+                  />
 
-              <CSelect
-                name="status"
-                label="Status"
-                placeholder="Select Status"
-                required
-                options={[
-                  { label: "Pending", value: "Pending" },
-                  { label: "In Progress", value: "In Progress" },
-                  { label: "Done", value: "Done" },
-                ]}
-              />
-            </div>
+                  <CSelect
+                    name="status"
+                    label="Status"
+                    placeholder="Select Status"
+                    required
+                    options={[
+                      { label: "Pending", value: "Pending" },
+                      { label: "In Progress", value: "In Progress" },
+                      { label: "Done", value: "Done" },
+                    ]}
+                  />
+                </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <CSelect
-                name="assigneeId"
-                label="Assignee"
-                placeholder="Select Member"
-                options={(teamData?.data || []).map((m: TMember) => ({
-                  label: `${m.name} (${m.currentLoad}/${m.capacity})`,
-                  value: m._id,
-                }))}
-              />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <CSelect
+                    name="assigneeId"
+                    label="Assignee"
+                    placeholder="Select Member"
+                    options={(teamData?.data || []).map((m: TMember) => ({
+                      label: `${m.name} (${m.currentLoad}/${m.capacity})`,
+                      value: m._id,
+                    }))}
+                    onValueChange={(memberId) =>
+                      handleAssigneeSelect(memberId, form)
+                    }
+                  />
+                  <Button
+                    type="button"
+                    className="sm:mt-6"
+                    onClick={() => handleAutoAssign(form)}
+                  >
+                    Auto Assign
+                  </Button>
+                </div>
+
+                <CTextarea
+                  fieldName="description"
+                  label="Description"
+                  required
+                  placeholder="Enter description"
+                />
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button type="button" variant="outline" onClick={onClose}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Create Task</Button>
+                </div>
+              </>
+            );
+          }}
+        </CForm>
+      </Modal>
+      {warningInfo && (
+        <Modal
+          open={true}
+          onOpenChange={() => setWarningInfo(null)}
+          title="Warning"
+        >
+          <div className="space-y-3">
+            <p>
+              <strong>{warningInfo.name}</strong> has{" "}
+              <strong>{warningInfo.currentLoad}</strong> tasks but capacity is{" "}
+              <strong>{warningInfo.capacity}</strong>. Assign anyway?
+            </p>
+
+            <div className="flex justify-end gap-3 pt-4">
               <Button
-                type="button"
-                className="sm:mt-6"
-                onClick={() => handleAutoAssign(form)}
+                variant="outline"
+                onClick={() => {
+                  if (formRef)
+                    formRef.setValue("assigneeId", warningInfo.memberId);
+                  setWarningInfo(null);
+                }}
               >
-                Auto Assign
+                Assign Anyway
+              </Button>
+
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (formRef) formRef.setValue("assigneeId", "");
+                  setWarningInfo(null);
+                }}
+              >
+                Choose Another
               </Button>
             </div>
-
-            <CTextarea
-              fieldName="description"
-              label="Description"
-              required
-              placeholder="Enter description"
-            />
-
-            <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit">Create Task</Button>
-            </div>
-          </>
-        )}
-      </CForm>
-    </Modal>
+          </div>
+        </Modal>
+      )}
+    </>
   );
 }

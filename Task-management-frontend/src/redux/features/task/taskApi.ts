@@ -8,16 +8,17 @@ const taskApi = baseApi.injectEndpoints({
         method: "POST",
         body: projectInfo,
       }),
-      invalidatesTags: ["Tasks"],
+      invalidatesTags: ["Tasks", "Teams"],
     }),
     getTask: builder.query({
-      query: () => ({
+      query: (projectId = "") => ({
         url: "/task",
         method: "GET",
+         params: projectId ? { projectId } : {},
       }),
       providesTags: ["Tasks"],
     }),
   }),
 });
 
-export const { useCreateTaskMutation } = taskApi;
+export const { useCreateTaskMutation, useGetTaskQuery } = taskApi;

@@ -15,9 +15,9 @@ const ProjectsPage = () => {
   return (
     <div className="py-6 lg:p-6 space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Projects</h1>
+      <div className="flex gap-5 flex-col items-center md:flex-row  justify-between">
+        <div className="text-center md:text-start">
+          <h1 className="text-3xl  font-bold">Projects</h1>
           <p className="text-gray-500">
             Track ongoing initiatives and progress.
           </p>

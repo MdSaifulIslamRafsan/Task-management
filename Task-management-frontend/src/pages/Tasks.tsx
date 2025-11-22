@@ -2,57 +2,62 @@ import { useState } from "react";
 import TaskModal from "../components/tasks/TaskModal";
 import { Button } from "../components/ui/button";
 import { Plus } from "lucide-react";
-
-const rawTasks = [
-  {
-    _id: "1",
-    title: "Homepage UI Update",
-    description: "Fix alignment issues on the hero section",
-    project: { name: "ShopSphere" },
-    assignedMemberName: "Saiful Islam",
-    priority: "High",
-    status: "In Progress",
-  },
-  {
-    _id: "2",
-    title: "Add Category Filter",
-    description: "Implement sidebar category filtering",
-    project: { name: "Product Review Portal" },
-    assignedMemberName: "Rafi",
-    priority: "Medium",
-    status: "Pending",
-  },
-  {
-    _id: "3",
-    title: "Fix Login Bug",
-    description: "404 error when logging in with Gmail",
-    project: { name: "Soulmate" },
-    assignedMemberName: "Hasan",
-    priority: "Low",
-    status: "Completed",
-  },
-];
+import { useGetTaskQuery } from "../redux/features/task/taskApi";
+import type { TTask } from "../Types/TaskTypes";
+import { useGetProjectsQuery } from "../redux/features/Projects/projectApi";
+import type { TProject } from "../Types/ProjectTypes";
 
 const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState("");
 
-  const [tasks] = useState(rawTasks);
+  const { data } = useGetTaskQuery(selectedProject);
+  const { data: projectsData } = useGetProjectsQuery(undefined);
+
+  const handleProjectChange = (projectId: string) => {
+    setSelectedProject(projectId);
+  };
+
+  const clearFilter = () => {
+    setSelectedProject("");
+  };
 
   return (
     <main className="py-6 lg:p-6 space-y-8">
-
       {/* Add Task Button */}
-      <div className="flex gap-5 justify-between">
-         <div>
+      <div className="flex gap-5 flex-col items-center md:flex-row  justify-between">
+        <div className="text-center md:text-start">
           <h1 className="text-3xl font-bold">Tasks</h1>
           <p className="text-gray-500">
             Track ongoing initiatives and progress.
           </p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          New Task
-        </Button>
+        <div className="flex gap-5 items-center flex-col md:flex-row justify-between">
+          <div>
+            <select
+              value={selectedProject}
+              onChange={(e) => handleProjectChange(e.target.value)}
+              className="p-2 border rounded-md bg-background w-64"
+            >
+              <option value="">All Projects</option>
+              {projectsData?.data?.map((project: TProject) => (
+                <option key={project?._id} value={project?._id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
+
+            {selectedProject && (
+              <Button variant="outline" size="sm" onClick={clearFilter}>
+                Clear Filter
+              </Button>
+            )}
+          </div>
+          <Button onClick={() => setIsModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            New Task
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-lg shadow-lg border overflow-x-auto">
@@ -74,45 +79,69 @@ const Tasks = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Status
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
 
           <tbody className=" divide-y divide-border">
-            {tasks.map((task) => (
-              <tr key={task._id}>
+            {data?.data?.map((task: TTask) => (
+              <tr key={task?._id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-foreground">
-                    {task.title}
+                    {task?.title}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {task.description}
+                    {task?.description}
                   </div>
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {task.project?.name}
+                  {task?.project?.name}
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {task.assignedMemberName}
+                  {task?.assigneeMember?.name || "Unassigned"}
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      task.priority === "High"
+                      task?.priority === "High"
                         ? "bg-red-100 text-red-800"
-                        : task.priority === "Medium"
+                        : task?.priority === "Medium"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-green-100 text-green-800"
                     }`}
                   >
-                    {task.priority}
+                    {task?.priority}
                   </span>
                 </td>
 
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {task.status}
+                  {task?.status}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      console.log("Delete:", task?._id);
+                    }}
+                  >
+                    Delete
+                  </Button>
                 </td>
               </tr>
             ))}
