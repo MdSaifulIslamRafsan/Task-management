@@ -36,12 +36,6 @@ const taskSchema = new mongoose.Schema<TTask>(
   { timestamps: true }
 );
 
-taskSchema.static(
-  "isTaskExistByTitle",
-  async function isTaskExistByTitle(title: string) {
-    const existingTask = await Task.findOne({ title });
-    return existingTask;
-  }
-);
+
 
 export const Task = mongoose.model<TTask, TaskModel>("Task", taskSchema);

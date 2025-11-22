@@ -108,9 +108,39 @@ const updateTaskStatusInDB = async (id: string, status: TStatus) => {
   return result;
 };
 
+const deleteTaskFromDB = async (id: string) => {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const task = await Task.findById(id).session(session);
+    if (!task) throw new Error("Task not found");
+
+    await Task.findByIdAndDelete(id).session(session);
+
+    if (task.assigneeId) {
+      await Member.findByIdAndUpdate(
+        task.assigneeId,
+        { $inc: { currentLoad: -1 } },
+        { session }
+      );
+    }
+
+    await session.commitTransaction();
+    return task;
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    await session.endSession();
+  }
+};
+
 export const taskService = {
   createTaskIntoDB,
   getAllTasksFromDB,
   getTaskByIdFromDB,
   updateTaskStatusInDB,
+  deleteTaskFromDB,
 };
