@@ -15,6 +15,7 @@ const memberSchema = new mongoose.Schema<TMember>(
       type: Number,
       required: true,
       min: 1,
+      max: 5,
     },
     currentLoad: {
       type: Number,

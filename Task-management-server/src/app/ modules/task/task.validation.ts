@@ -7,7 +7,7 @@ const createTaskValidation = z.object({
     projectId: z.string().nonempty("Project ID is required"),
     assigneeId: z.string().optional(),
     priority: z.enum(["Low", "Medium", "High"]).default("Medium"),
-    status: z.enum(["Pending", "In Progress", "Completed"]).default("Pending"),
+    status: z.enum(["Pending", "In Progress", "Done"]).default("Pending"),
     dueDate: z.string().optional(),
   }),
 });
@@ -19,7 +19,7 @@ const updateTaskStatusValidation = z.object({
     projectId: z.string().optional(),
     assigneeId: z.string().optional(),
     priority: z.enum(["Low", "Medium", "High"]).optional(),
-    status: z.enum(["Pending", "In Progress", "Completed"]).optional(),
+    status: z.enum(["Pending", "In Progress", "Done"]).optional(),
     dueDate: z.string().optional(),
   }),
 });

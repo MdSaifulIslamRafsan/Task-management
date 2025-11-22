@@ -8,6 +8,9 @@ import { TeamRoutes } from "../ modules/team/team.route";
 import { MemberRoutes } from "../ modules/member/member.route";
 import { DashboardRoutes } from "../ modules/dashboard/dashboard.route";
 
+import { ActivityRoutes } from "../ modules/activity/activity.route";
+import { ReassignmentRoutes } from "../ modules/reassignment/reassignment.route";
+
 const router = express.Router();
 
 const modulesRoutes = [
@@ -38,7 +41,15 @@ const modulesRoutes = [
   {
     path: "/dashboard",
     route: DashboardRoutes,
-  }
+  },
+  {
+    path: "/activity",
+    route: ActivityRoutes,
+  },
+  {
+    path: "/reassignment",
+    route: ReassignmentRoutes,
+  },
 ];
 
 modulesRoutes.forEach((route) => router.use(route.path, route.route));

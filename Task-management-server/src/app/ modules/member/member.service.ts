@@ -18,7 +18,7 @@ const createMemberIntoDB = async (data: TMember) => {
 };
 
 const getAllMembersFromDB = async () => {
-  const result = await Member.find().populate("teamId");
+  const result = await Member.find().limit(10).populate("teamId");
   return result;
 };
 
