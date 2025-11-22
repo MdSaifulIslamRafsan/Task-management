@@ -1,3 +1,4 @@
+
 import { baseApi } from "../../api/baseApi";
 
 const taskApi = baseApi.injectEndpoints({
@@ -25,7 +26,28 @@ const taskApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Tasks", "Teams"],
     }),
+    updateTask: builder.mutation({
+      query: ({ taskId, ...updatedInfo }) => ({
+        url: `/task/${taskId}`,
+        method: "PUT",
+        body: updatedInfo,
+      }),
+      invalidatesTags: ["Tasks", "Teams"],
+    }),
+    getTaskById: builder.query({
+      query: (taskId) => ({
+        url: `/task/${taskId}`,
+        method: "GET",
+      }),
+      providesTags: ["Tasks"],
+    }),
   }),
 });
 
-export const { useCreateTaskMutation, useGetTaskQuery,  useDeleteTaskMutation } = taskApi;
+export const {
+  useCreateTaskMutation,
+  useGetTaskQuery,
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+  useGetTaskByIdQuery,
+} = taskApi;

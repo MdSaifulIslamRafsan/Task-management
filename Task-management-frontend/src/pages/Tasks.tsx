@@ -7,13 +7,14 @@ import type { TTask } from "../Types/TaskTypes";
 import { useGetProjectsQuery } from "../redux/features/Projects/projectApi";
 import type { TProject } from "../Types/ProjectTypes";
 import ConfirmModal from "../components/tasks/ConfirmModal";
+import UpdateTaskModal from "../components/tasks/UpdateTaskModal";
 
 const Tasks = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState("");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const { data } = useGetTaskQuery(selectedProject);
   const { data: projectsData } = useGetProjectsQuery(undefined);
@@ -22,13 +23,14 @@ const Tasks = () => {
     setSelectedProject(projectId);
   };
 
-  const clearFilter = () => {
-    setSelectedProject("");
-  };
-
   const handleDeleteClick = (taskId: string) => {
     setSelectedTaskId(taskId);
     setDeleteModalOpen(true);
+  };
+
+  const handleUpdateClick = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setIsUpdateModalOpen(true);
   };
 
   return (
@@ -55,12 +57,6 @@ const Tasks = () => {
                 </option>
               ))}
             </select>
-
-            {selectedProject && (
-              <Button variant="outline" size="sm" onClick={clearFilter}>
-                Clear Filter
-              </Button>
-            )}
           </div>
           <Button onClick={() => setIsModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
@@ -136,13 +132,19 @@ const Tasks = () => {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      setIsModalOpen(true);
+                      handleUpdateClick(task?._id);
                     }}
                   >
                     Edit
                   </Button>
 
-                  <Button variant="destructive" size="sm" onClick={() => {handleDeleteClick(task?._id)}}>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      handleDeleteClick(task?._id);
+                    }}
+                  >
                     Delete
                   </Button>
                 </td>
@@ -159,6 +161,13 @@ const Tasks = () => {
         <ConfirmModal
           isOpen={deleteModalOpen}
           onCancel={() => setDeleteModalOpen(false)}
+          selectedTaskId={selectedTaskId}
+        />
+      )}
+      {isUpdateModalOpen && (
+        <UpdateTaskModal
+          isOpen={isUpdateModalOpen}
+          onClose={() => setIsUpdateModalOpen(false)}
           selectedTaskId={selectedTaskId}
         />
       )}
