@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Menu, Moon, Sun, X } from "lucide-react";
 import { useTheme } from "../../utils/useTheme";
 import { Button } from "../ui/button";
@@ -39,12 +39,15 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-background border-b shadow-sm">
       <div className="container mx-auto px-4 lg:px-8 flex items-center justify-between h-20">
         {/* Logo */}
-        <div className="flex items-center gap-1 font-semibold text-lg">
+        <Link
+          to={"/"}
+          className="flex items-center gap-1 font-semibold text-lg"
+        >
           <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-sm">
             S
           </div>
           <span>martTask</span>
-        </div>
+        </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6">
