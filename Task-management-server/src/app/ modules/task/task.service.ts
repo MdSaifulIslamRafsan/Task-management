@@ -1,4 +1,4 @@
-import { TTask, TStatus } from "./task.interface";
+import { TTask } from "./task.interface";
 import { Task } from "./task.model";
 
 import { Member } from "../member/member.model";
@@ -93,18 +93,61 @@ const getAllTasksFromDB = async (projectId?: string) => {
   return result;
 };
 
-const getTaskByIdFromDB = async (id: string) => {
-  const result = await Task.findById(id);
-  return result;
+const getTaskByIdFromDB = async (taskId: string) => {
+  const result = await Task.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(taskId) } },
+    {
+      $lookup: {
+        from: "projects",
+        localField: "projectId",
+        foreignField: "_id",
+        as: "project",
+      },
+    },
+    { $unwind: "$project" },
+
+    {
+      $lookup: {
+        from: "members",
+        localField: "assigneeId",
+        foreignField: "_id",
+        as: "assigneeMember",
+      },
+    },
+    {
+      $unwind: {
+        path: "$assigneeMember",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        priority: 1,
+        status: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        project: {
+          _id: 1,
+          name: 1,
+        },
+        assigneeMember: {
+          _id: 1,
+          name: 1,
+        },
+      },
+    },
+  ]);
+  return result[0] || null;
 };
 
-const updateTaskStatusInDB = async (id: string, status: TStatus) => {
-  const result = await Task.findByIdAndUpdate(
-    id,
-    { status },
-    { new: true }
-  ).populate("assignedTo");
-
+const updateTaskStatusInDB = async (taskId: string, updateInfo: TTask) => {
+  const result = await Task.findByIdAndUpdate(taskId, updateInfo, {
+    new: true,
+  });
+  console.log("Updated Task result:", result);
   return result;
 };
 

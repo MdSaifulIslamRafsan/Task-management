@@ -35,8 +35,8 @@ const getAllTasks = catchAsync(async (req, res) => {
 });
 
 const getTaskById = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const result = await taskService.getTaskByIdFromDB(id);
+  const { taskId } = req.params;
+  const result = await taskService.getTaskByIdFromDB(taskId);
 
   sendResponse(res, {
     success: true,
@@ -47,14 +47,15 @@ const getTaskById = catchAsync(async (req, res) => {
 });
 
 const updateTaskStatus = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  const result = await taskService.updateTaskStatusInDB(id, status);
+  const { taskId } = req.params;
+  const { updateInfo } = req.body;
+
+  const result = await taskService.updateTaskStatusInDB(taskId, updateInfo);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Task status updated successfully",
+    message: "Task updated successfully",
     data: result,
   });
 });

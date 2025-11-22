@@ -14,7 +14,13 @@ const createTaskValidation = z.object({
 
 const updateTaskStatusValidation = z.object({
   body: z.object({
-    status: z.enum(["Pending", "In Progress", "Completed"]),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    projectId: z.string().optional(),
+    assigneeId: z.string().optional(),
+    priority: z.enum(["Low", "Medium", "High"]).optional(),
+    status: z.enum(["Pending", "In Progress", "Completed"]).optional(),
+    dueDate: z.string().optional(),
   }),
 });
 
